@@ -1,0 +1,117 @@
+﻿using MVC5Homework.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVC5Homework.Controllers
+{
+    public class 客戶聯絡人Controller : Controller
+    {
+        private 客戶資料Entities db = new 客戶資料Entities();
+        // GET: 客戶聯絡人
+        public ActionResult Index()
+        {
+            return View(db.客戶聯絡人);
+        }
+
+        public ActionResult Create()
+        {
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(客戶聯絡人 Contact)
+        {
+            if (ModelState.IsValid)
+            {
+                db.客戶聯絡人.Add(Contact);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+
+            return View(Contact);
+        }
+
+        public ActionResult Edit(int? Id)
+        {
+            if (Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var data = db.客戶聯絡人.Find(Id);
+            if (data == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            return View(data);
+        }
+
+
+        [HttpPost]
+        public ActionResult Edit(int Id, 客戶聯絡人 Contact)
+        {
+            if (ModelState.IsValid)
+            {
+                var data = db.客戶聯絡人.Find(Id);
+                data.客戶Id = Contact.客戶Id;
+                data.職稱 = Contact.職稱;
+                data.姓名 = Contact.姓名;
+                data.Email = Contact.Email;
+                data.手機 = Contact.手機;
+                data.電話 = Contact.電話;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            return View(Contact);
+        }
+
+        public ActionResult Details(int? Id)
+        {
+            if (Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var data = db.客戶聯絡人.Find(Id);
+            if (data == null)
+            { return HttpNotFound(); }
+            return View(data);
+        }
+
+        public ActionResult Delete(int? Id)
+        {
+            if (Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var data = db.客戶聯絡人.Find(Id);
+            if (data == null)
+            {
+                return HttpNotFound();
+            }
+            return View(data);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public ActionResult DeletePOST(int Id)
+        {
+            if (ModelState.IsValid)
+            {
+                var data = db.客戶聯絡人.Find(Id);
+                db.客戶聯絡人.Remove(data);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(Id);
+        }
+    }
+}
