@@ -1,4 +1,5 @@
 ﻿using MVC5Homework.Models;
+using Omu.ValueInjecter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,12 +60,13 @@ namespace MVC5Homework.Controllers
             if (ModelState.IsValid)
             {
                 var data = db.客戶資料.Find(Id);
-                data.客戶名稱 = Client.客戶名稱;
-                data.統一編號 = Client.統一編號;
-                data.電話 = Client.電話;
-                data.傳真 = Client.傳真;
-                data.地址 = Client.地址;
-                data.Email = Client.Email;
+                data.InjectFrom(Client);
+                //data.客戶名稱 = Client.客戶名稱;
+                //data.統一編號 = Client.統一編號;
+                //data.電話 = Client.電話;
+                //data.傳真 = Client.傳真;
+                //data.地址 = Client.地址;
+                //data.Email = Client.Email;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

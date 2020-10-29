@@ -1,4 +1,5 @@
 ﻿using MVC5Homework.Models;
+using Omu.ValueInjecter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace MVC5Homework.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", data.客戶Id);
             return View(data);
         }
 
@@ -59,12 +60,13 @@ namespace MVC5Homework.Controllers
             if (ModelState.IsValid)
             {
                 var data = db.客戶銀行資訊.Find(Id);
-                data.客戶Id = Bank.客戶Id;
-                data.銀行代碼 = Bank.銀行代碼;
-                data.銀行代碼 = Bank.銀行代碼;
-                data.分行代碼 = Bank.分行代碼;
-                data.帳戶名稱 = Bank.帳戶名稱;
-                data.帳戶號碼 = Bank.帳戶號碼;
+                data.InjectFrom(Bank);
+                //data.客戶Id = Bank.客戶Id;
+                //data.銀行代碼 = Bank.銀行代碼;
+                //data.銀行代碼 = Bank.銀行代碼;
+                //data.分行代碼 = Bank.分行代碼;
+                //data.帳戶名稱 = Bank.帳戶名稱;
+                //data.帳戶號碼 = Bank.帳戶號碼;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
