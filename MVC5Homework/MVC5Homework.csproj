@@ -155,6 +155,7 @@
       <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IsValidEmailAttribute.cs" />
+    <Compile Include="Models\IsValidPhoneAttribute.cs" />
     <Compile Include="Models\客戶報表.cs">
       <DependentUpon>客戶資料.tt</DependentUpon>
     </Compile>

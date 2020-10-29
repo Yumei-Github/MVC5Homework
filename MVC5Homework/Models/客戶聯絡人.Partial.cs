@@ -30,7 +30,8 @@ namespace MVC5Homework.Models
         public string Email { get; set; }
 
         //[StringLength(50, ErrorMessage = "欄位長度不得大於 50 個字元")]
-        [StringLength(10, MinimumLength = 10, ErrorMessage = "只能輸入10個數字")]
+        //[StringLength(11, MinimumLength = 11, ErrorMessage = "只能輸入11個數字")]
+        [IsValidPhone]
         public string 手機 { get; set; }
 
         [StringLength(50, ErrorMessage = "欄位長度不得大於 50 個字元")]
