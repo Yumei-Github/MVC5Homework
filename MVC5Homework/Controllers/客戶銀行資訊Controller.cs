@@ -14,7 +14,7 @@ namespace MVC5Homework.Controllers
         // GET: 客戶銀行資訊
         public ActionResult Index()
         {
-            return View(db.客戶銀行資訊);
+            return View(db.客戶銀行資訊.Where(p => p.isDelete == false));
         }
 
         public ActionResult Create()
@@ -102,10 +102,20 @@ namespace MVC5Homework.Controllers
         [ActionName("Delete")]
         public ActionResult DeletePOST(int Id)
         {
+            //if (ModelState.IsValid)
+            //{
+            //    var data = db.客戶銀行資訊.Find(Id);
+            //    db.客戶銀行資訊.Remove(data);
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
+
+            db.Configuration.ValidateOnSaveEnabled = false;
+
             if (ModelState.IsValid)
             {
                 var data = db.客戶銀行資訊.Find(Id);
-                db.客戶銀行資訊.Remove(data);
+                data.isDelete = true;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

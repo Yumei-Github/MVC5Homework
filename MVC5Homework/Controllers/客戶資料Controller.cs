@@ -16,7 +16,7 @@ namespace MVC5Homework.Controllers
         public ActionResult Index()
         {
 
-            return View(db.客戶資料);
+            return View(db.客戶資料.Where(p => p.isDelete == false));
         }
 
         public ActionResult Create()
@@ -105,10 +105,20 @@ namespace MVC5Homework.Controllers
         [ActionName("Delete")]
         public ActionResult DeletePOST(int Id)
         {
-            var data = db.客戶資料.Find(Id);
-            db.客戶資料.Remove(data);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            //var data = db.客戶資料.Find(Id);
+            //db.客戶資料.Remove(data);
+            //db.SaveChanges();
+
+            db.Configuration.ValidateOnSaveEnabled = false;
+
+            if (ModelState.IsValid)
+            {
+                var data = db.客戶資料.Find(Id);
+                data.isDelete = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(Id);
 
         }
 
