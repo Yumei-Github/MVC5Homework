@@ -10,7 +10,8 @@ namespace MVC5Homework.Controllers
 {
     public class ReportsController : Controller
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
+        //private 客戶資料Entities db = new 客戶資料Entities();
+        客戶報表Repository repo = RepositoryHelper.Get客戶報表Repository();
         public ReportsController()
         {
 
@@ -18,7 +19,7 @@ namespace MVC5Homework.Controllers
         // GET: Reports
         public ActionResult Index()
         {
-            return View(db.客戶報表);
+            return View(repo.All());
         }
     }
 }

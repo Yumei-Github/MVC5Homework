@@ -11,16 +11,26 @@ namespace MVC5Homework.Controllers
 {
     public class 客戶聯絡人Controller : Controller
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
+        //private 客戶資料Entities db = new 客戶資料Entities();
+
+        客戶資料Repository repo;
+        客戶聯絡人Repository repo_Contact;
+
+        public 客戶聯絡人Controller()
+        {
+            repo = RepositoryHelper.Get客戶資料Repository();
+            repo_Contact = RepositoryHelper.Get客戶聯絡人Repository(repo.UnitOfWork);
+        }
+
         // GET: 客戶聯絡人
         public ActionResult Index()
         {
-            return View(db.客戶聯絡人.Where(p => p.isDelete == false));
+            return View(repo_Contact.All().Where(p => p.isDelete == false));
         }
 
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱");
             return View();
         }
 
@@ -29,12 +39,12 @@ namespace MVC5Homework.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(Contact);
-                db.SaveChanges();
+                repo_Contact.Add(Contact);
+                repo_Contact.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱");
 
             return View(Contact);
         }
@@ -45,12 +55,12 @@ namespace MVC5Homework.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = db.客戶聯絡人.Find(Id);
+            var data = repo_Contact.All().FirstOrDefault(p => p.Id == Id);
             if (data == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", data.客戶Id);
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱", data.客戶Id);
             return View(data);
         }
 
@@ -60,7 +70,7 @@ namespace MVC5Homework.Controllers
         {
             if (ModelState.IsValid)
             {
-                var data = db.客戶聯絡人.Find(Id);
+                var data = repo_Contact.All().FirstOrDefault(p=>p.Id== Id);
                 data.InjectFrom(Contact);
                 //data.客戶Id = Contact.客戶Id;
                 //data.職稱 = Contact.職稱;
@@ -68,10 +78,10 @@ namespace MVC5Homework.Controllers
                 //data.Email = Contact.Email;
                 //data.手機 = Contact.手機;
                 //data.電話 = Contact.電話;
-                db.SaveChanges();
+                repo_Contact.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱");
             return View(Contact);
         }
 
@@ -81,7 +91,7 @@ namespace MVC5Homework.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = db.客戶聯絡人.Find(Id);
+            var data = repo_Contact.All().FirstOrDefault(p => p.Id == Id);
             if (data == null)
             { return HttpNotFound(); }
             return View(data);
@@ -93,7 +103,7 @@ namespace MVC5Homework.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = db.客戶聯絡人.Find(Id);
+            var data = repo_Contact.All().FirstOrDefault(p => p.Id == Id);
             if (data == null)
             {
                 return HttpNotFound();
@@ -113,13 +123,13 @@ namespace MVC5Homework.Controllers
             //    return RedirectToAction("Index");
             //}
 
-            db.Configuration.ValidateOnSaveEnabled = false;
+            repo_Contact.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
 
             if (ModelState.IsValid)
             {
-                var data = db.客戶聯絡人.Find(Id);
+                var data = repo_Contact.All().FirstOrDefault(p => p.Id == Id);
                 data.isDelete  = true;
-                db.SaveChanges();
+                repo_Contact.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 

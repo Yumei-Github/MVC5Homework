@@ -11,16 +11,23 @@ namespace MVC5Homework.Controllers
 {
     public class 客戶銀行資訊Controller : Controller
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
+        //private 客戶資料Entities db = new 客戶資料Entities();
+        客戶資料Repository repo;
+        客戶銀行資訊Repository repo_Bank;
+        public 客戶銀行資訊Controller()
+        {
+            repo = RepositoryHelper.Get客戶資料Repository();
+            repo_Bank = RepositoryHelper.Get客戶銀行資訊Repository(repo.UnitOfWork);
+        }
         // GET: 客戶銀行資訊
         public ActionResult Index()
         {
-            return View(db.客戶銀行資訊.Where(p => p.isDelete == false));
+            return View(repo_Bank.All().Where(p => p.isDelete == false));
         }
 
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱");
             return View();
         }
 
@@ -29,12 +36,12 @@ namespace MVC5Homework.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶銀行資訊.Add(Bank);
-                db.SaveChanges();
+                repo_Bank.Add(Bank);
+                repo_Bank.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱");
 
             return View(Bank);
         }
@@ -45,12 +52,12 @@ namespace MVC5Homework.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = db.客戶銀行資訊.Find(Id);
+            var data = repo_Bank.All().FirstOrDefault(p => p.Id == Id);
             if (data == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", data.客戶Id);
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱", data.客戶Id);
             return View(data);
         }
 
@@ -59,7 +66,7 @@ namespace MVC5Homework.Controllers
         {
             if (ModelState.IsValid)
             {
-                var data = db.客戶銀行資訊.Find(Id);
+                var data = repo_Bank.All().FirstOrDefault(p => p.Id == Id);
                 data.InjectFrom(Bank);
                 //data.客戶Id = Bank.客戶Id;
                 //data.銀行代碼 = Bank.銀行代碼;
@@ -67,10 +74,10 @@ namespace MVC5Homework.Controllers
                 //data.分行代碼 = Bank.分行代碼;
                 //data.帳戶名稱 = Bank.帳戶名稱;
                 //data.帳戶號碼 = Bank.帳戶號碼;
-                db.SaveChanges();
+                repo_Bank.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo.All().Where(p => p.isDelete == false), "Id", "客戶名稱");
             return View(Bank);
         }
 
@@ -80,7 +87,7 @@ namespace MVC5Homework.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = db.客戶銀行資訊.Find(Id);
+            var data = repo_Bank.All().FirstOrDefault(p => p.Id == Id);
             if (data == null)
             { return HttpNotFound(); }
             return View(data);
@@ -92,7 +99,7 @@ namespace MVC5Homework.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = db.客戶銀行資訊.Find(Id);
+            var data = repo_Bank.All().FirstOrDefault(p => p.Id == Id);
             if (data == null)
             {
                 return HttpNotFound();
@@ -112,13 +119,13 @@ namespace MVC5Homework.Controllers
             //    return RedirectToAction("Index");
             //}
 
-            db.Configuration.ValidateOnSaveEnabled = false;
+            repo_Bank.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
 
             if (ModelState.IsValid)
             {
-                var data = db.客戶銀行資訊.Find(Id);
+                var data = repo_Bank.All().FirstOrDefault(p => p.Id == Id);
                 data.isDelete = true;
-                db.SaveChanges();
+                repo_Bank.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
